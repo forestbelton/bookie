@@ -94,7 +94,7 @@ data Insn
     | ISelfDestruct
 
 encodeInsn :: Insn -> Builder
-encodeInsn (IPush n bytes) = word8 (0x60 + n) <> bytes
+encodeInsn (IPush n bytes) = word8 (0x60 + n - 1) <> bytes
 encodeInsn insn = word8 $ case insn of
     IStop           -> 0x00
     IAdd            -> 0x01
@@ -153,8 +153,8 @@ encodeInsn insn = word8 $ case insn of
     IMSize          -> 0x59
     IGas            -> 0x5a
     IJumpDest       -> 0x5b
-    IDup n          -> 0x80 + n
-    ISwap n         -> 0x90 + n
+    IDup n          -> 0x80 + n - 1
+    ISwap n         -> 0x90 + n - 1
     ICreate         -> 0xf0
     ICall           -> 0xf1
     ICallCode       -> 0xf2
