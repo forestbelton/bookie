@@ -21,4 +21,13 @@ compileExpr (I x)        = encodeInsn $ IPush 4 (word32BE x)
 compileExpr (BOp op l r) = compileExpr r <> compileExpr l <> compileOp op
 
 codeGen :: Expr -> B.ByteString
-codeGen = toLazyByteString . lazyByteStringHex . toLazyByteString . compileExpr
+codeGen = toLazyByteString . lazyByteStringHex . toLazyByteString . (<> returnTop) . compileExpr
+
+returnTop :: Builder
+returnTop = foldMap encodeInsn code
+    where code = [ IPush 1 (word8 0)
+                 , IMStore
+                 , IPush 1 (word8 32)
+                 , IPush 1 (word8 0)
+                 , IReturn
+                 ]
